@@ -7,13 +7,13 @@ ui:
   namespace: /
 
 rest:
-  # Public HTTPS endpoint for the DSpace REST API backend.
-  # Both server-side rendering (Node.js) and browser-side JavaScript use this URL.
-  # It must be reachable from the end-user's browser, i.e. the public hostname served
-  # by nginx with a valid TLS certificate.
-  ssl: true
-  host: bulawayo-polytechnic-repository.dare.co.zw
-  port: 443
+  # REST API reachable at the server's public IP on port 8080.
+  # Both the Angular SSR process (Docker container) and browser clients use this URL.
+  # TODO: switch to ssl: true / host: bulawayo-polytechnic-repository.dare.co.zw / port: 443
+  # once nginx with a valid TLS certificate is deployed.
+  ssl: false
+  host: 144.91.125.128
+  port: 8080
   namespace: /server
 
 cache:

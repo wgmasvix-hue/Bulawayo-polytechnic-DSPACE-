@@ -19,13 +19,13 @@ services:
       - dspacedb
     networks:
       - dspacenet
-    # Bind backend ports to loopback only — nginx (or another reverse proxy) forwards
-    # external traffic.  Never expose these directly on 0.0.0.0 in production.
+    # Port 8080 is exposed on all interfaces so browser-side Angular JS can reach the
+    # REST API at http://144.91.125.128:8080/server.
+    # TODO: once nginx + TLS is running, bind this back to 127.0.0.1 and let nginx
+    # proxy /server internally — that removes the public 8080 exposure.
     ports:
-      - "127.0.0.1:8080:8080"
-      # Port 8000 is the Handle Server listener — expose only if you have registered
-      # a real Handle prefix AND your handle.net configuration requires direct inbound
-      # TCP connections.  Comment out if not using the Handle Server.
+      - "0.0.0.0:8080:8080"
+      # Port 8000 is the Handle Server — only needed if a real Handle prefix is registered.
       - "127.0.0.1:8000:8000"
     environment:
       # __P__ => "." and __D__ => "-" in property names.
