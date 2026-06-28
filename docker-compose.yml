@@ -46,7 +46,7 @@ services:
       # Production URLs — must match the public hostname served by nginx/reverse-proxy.
       dspace__P__server__P__url: http://bulawayo-polytechnic-repository.dare.co.zw:8080/server
       dspace__P__ui__P__url: http://144.91.125.128:4000
-      dspace__P__name: 'Bulawayo Polytechnic Institutional Repository'
+      dspace__P__name: 'Bulawayo Polytechnic DSpace'
       db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
       db__P__password: '${POSTGRES_PASSWORD}'
       solr__P__server: http://dspacesolr:8983/solr
