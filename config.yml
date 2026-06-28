@@ -1,13 +1,19 @@
 ui:
+  # The Angular Node.js server listens on all interfaces inside the container;
+  # nginx (or another reverse proxy) terminates TLS and forwards requests to port 4000.
   ssl: false
   host: 0.0.0.0
   port: 4000
   namespace: /
 
 rest:
-  ssl: false
-  host: dspace
-  port: 8080
+  # Public HTTPS endpoint for the DSpace REST API backend.
+  # Both server-side rendering (Node.js) and browser-side JavaScript use this URL.
+  # It must be reachable from the end-user's browser, i.e. the public hostname served
+  # by nginx with a valid TLS certificate.
+  ssl: true
+  host: bulawayo-polytechnic-repository.dare.co.zw
+  port: 443
   namespace: /server
 
 cache:
