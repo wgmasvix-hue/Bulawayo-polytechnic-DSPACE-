@@ -1,0 +1,30 @@
+ui:
+  ssl: false
+  host: 0.0.0.0
+  port: 4000
+  namespace: /
+
+rest:
+  ssl: false
+  host: dspace
+  port: 8080
+  namespace: /server
+
+cache:
+  msToLive:
+    default: 900000
+
+production: true
+
+defaultLanguage: en
+
+theme:
+  name: dspace
+
+mediaViewer:
+  image: false
+  video: false
+
+info:
+  enableEndUserAgreement: true
+  enablePrivacyStatement: true

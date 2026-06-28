@@ -1,0 +1,11 @@
+ui:
+  ssl: false
+  host: 0.0.0.0
+  port: 4000
+  nameSpace: /
+
+rest:
+  ssl: false
+  host: dspace
+  port: 8080
+  nameSpace: /server

@@ -1,0 +1,32 @@
+services:
+  dspace-angular:
+    image: dspace/dspace-angular:dspace-8.1-dist
+    container_name: dspace-angular
+    restart: unless-stopped
+
+    environment:
+      DSPACE_UI_SSL: "false"
+      DSPACE_UI_HOST: "0.0.0.0"
+      DSPACE_UI_PORT: "4000"
+      DSPACE_UI_NAMESPACE: "/"
+      DSPACE_REST_SSL: "false"
+      DSPACE_REST_HOST: "dspace"
+      DSPACE_REST_PORT: "8080"
+      DSPACE_REST_NAMESPACE: "/server"
+
+    volumes:
+      - ./config.yml:/app/config/config.yml:ro
+
+    ports:
+      - "4000:4000"
+
+    depends_on:
+      - dspace
+
+    networks:
+      - dspacenet
+
+networks:
+  dspacenet:
+    external: true
+    name: bulawayo-polytechnic-dspace-official_dspacenet

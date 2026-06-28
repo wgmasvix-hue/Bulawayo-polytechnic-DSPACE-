@@ -19,7 +19,8 @@ services:
       # Uncomment to set a non-default value for dspace.server.url or dspace.ui.url
       # dspace__P__server__P__url: http://localhost:8080/server
       # dspace__P__ui__P__url: http://localhost:4000
-      dspace__P__name: 'Bulawayo Polytechnic Institutional Repository'         # db.url: Ensure we are using the 'dspacedb' image for our database
+      dspace__P__name: 'DSpace Started with Docker Compose'
+      # db.url: Ensure we are using the 'dspacedb' image for our database
       db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
       # solr.server: Ensure we are using the 'dspacesolr' image for Solr
       solr__P__server: http://dspacesolr:8983/solr
@@ -36,9 +37,9 @@ services:
     networks:
       - dspacenet
     ports:
-    - published: 8080
+    - published: 8180
       target: 8080
-    - published: 8000
+    - published: 8100
       target: 8000
     stdin_open: true
     tty: true
@@ -73,7 +74,7 @@ services:
     networks:
       dspacenet:
     ports:
-    - published: 5432
+    - published: 5434
       target: 5432
     stdin_open: true
     tty: true
@@ -94,7 +95,7 @@ services:
     networks:
       dspacenet:
     ports:
-    - published: 8983
+    - published: 8985
       target: 8983
     stdin_open: true
     tty: true
