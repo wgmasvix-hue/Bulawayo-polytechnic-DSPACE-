@@ -24,9 +24,11 @@ services:
     volumes:
       - ./config.yml:/app/config/config.yml:ro
 
-    # Bind Angular to loopback only — nginx forwards external HTTPS traffic.
+    # Expose Angular on all interfaces so it is reachable at both:
+    #   http://144.91.125.128:4000  (direct IP access)
+    #   https://bulawayo-polytechnic-repository.dare.co.zw  (via nginx)
     ports:
-      - "127.0.0.1:4000:4000"
+      - "0.0.0.0:4000:4000"
 
     depends_on:
       - dspace
