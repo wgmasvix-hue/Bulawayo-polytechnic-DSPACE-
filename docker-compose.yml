@@ -17,6 +17,12 @@ services:
     restart: unless-stopped
     depends_on:
       - dspacedb
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/server/api || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
     networks:
       dspacenet:
         aliases:
