@@ -18,7 +18,13 @@ services:
     depends_on:
       - dspacedb
     networks:
-      - dspacenet
+      dspacenet:
+        aliases:
+          # Docker's embedded DNS returns the dspace container IP for this hostname
+          # when queried from within the dspacenet network (e.g. from dspace-angular
+          # during SSR).  Public DNS still resolves it to the server's external IP
+          # for browser clients — so a single REST URL works for both.
+          - bulawayo-polytechnic-repository.dare.co.zw
     # Port 8080 is exposed on all interfaces so browser-side Angular JS can reach the
     # REST API at http://144.91.125.128:8080/server.
     # TODO: once nginx + TLS is running, bind this back to 127.0.0.1 and let nginx

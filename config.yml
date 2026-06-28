@@ -7,12 +7,12 @@ ui:
   namespace: /
 
 rest:
-  # REST API reachable at the server's public IP on port 8080.
-  # Both the Angular SSR process (Docker container) and browser clients use this URL.
-  # TODO: switch to ssl: true / host: bulawayo-polytechnic-repository.dare.co.zw / port: 443
-  # once nginx with a valid TLS certificate is deployed.
+  # The domain is used as the REST host for both SSR and browser clients.
+  # Inside Docker, it resolves to the dspace container via a network alias.
+  # Browser clients reach it on port 8080 via public DNS.
+  # TODO: set ssl: true and port: 443 once nginx + TLS is running.
   ssl: false
-  host: 144.91.125.128
+  host: bulawayo-polytechnic-repository.dare.co.zw
   port: 8080
   namespace: /server
 

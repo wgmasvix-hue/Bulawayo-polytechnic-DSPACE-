@@ -12,17 +12,22 @@ services:
       DSPACE_UI_PORT: "4000"
       DSPACE_UI_NAMESPACE: "/"
 
-      # REST API endpoint.
-      # Using the server's public IP (not the Docker-internal 'dspace' hostname)
-      # means BOTH the Angular SSR Node.js process (inside the container) AND
-      # browser-side JavaScript can reach the DSpace backend on port 8080.
-      # TODO: once nginx + TLS is set up, change these to:
-      #   DSPACE_REST_SSL: "true"
-      #   DSPACE_REST_HOST: "bulawayo-polytechnic-repository.dare.co.zw"
+      # REST API URL — same value used by both SSR (Node.js inside Docker) and
+      # browser JavaScript on the client.
+      #
+      # Inside Docker, 'bulawayo-polytechnic-repository.dare.co.zw' resolves to
+      # the dspace container via the Docker network alias (see docker-compose.yml),
+      # so SSR calls never leave the host.
+      #
+      # Browser clients resolve the same hostname via public DNS to 144.91.125.128
+      # and reach port 8080 directly.
+      #
+      # TODO: once nginx + TLS is deployed, change to:
+      #   DSPACE_REST_SSL:  "true"
       #   DSPACE_REST_PORT: "443"
-      #   and bind port 8080 to 127.0.0.1 in docker-compose.yml.
+      #   (and bind 8080 to 127.0.0.1 in docker-compose.yml)
       DSPACE_REST_SSL: "false"
-      DSPACE_REST_HOST: "144.91.125.128"
+      DSPACE_REST_HOST: "bulawayo-polytechnic-repository.dare.co.zw"
       DSPACE_REST_PORT: "8080"
       DSPACE_REST_NAMESPACE: "/server"
 
