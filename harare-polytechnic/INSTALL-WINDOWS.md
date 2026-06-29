@@ -1,81 +1,75 @@
-# Harare Polytechnic DSpace 8 — Windows Installation Guide
+# Harare Polytechnic DSpace 8 — Installation Guide
 
-## Prerequisites
-
-### 1. Enable WSL2
-Open PowerShell as Administrator and run:
-```powershell
-wsl --install
-```
-Restart the PC when prompted.
-
-### 2. Install Docker Desktop
-Download from: https://www.docker.com/products/docker-desktop/
-
-During installation:
-- Select "Use WSL 2 instead of Hyper-V"
-- After install, open Docker Desktop and wait for it to start (whale icon in taskbar turns steady)
+## Server details
+| Item | Value |
+|------|-------|
+| ESXi host | hrepolyREP |
+| Static IP | 192.168.26.3 |
+| UI access | http://192.168.26.3:4000 |
+| REST API | http://192.168.26.3:8080/server |
 
 ---
 
-## Setup
+## Step 1 — Create a Linux VM on ESXi
 
-### 3. Create the project folder
-Open PowerShell and run:
-```powershell
-mkdir C:\dspace\harare-polytechnic
+Log into ESXi at `https://192.168.26.3/` as root, then:
+1. Create a new VM → Ubuntu Server 22.04 LTS
+2. Assign at least: **4 vCPU, 8 GB RAM, 100 GB disk**
+3. Set the VM's network adapter to the same network as ESXi (192.168.26.x)
+4. Boot the VM and install Ubuntu Server
+
+---
+
+## Step 2 — Install Docker on the Ubuntu VM
+
+SSH into the VM, then:
+
+```bash
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+newgrp docker
+
+# Verify
+docker --version
+docker compose version
 ```
 
-### 4. Copy files
-Copy the contents of this `harare-polytechnic/` folder into `C:\dspace\harare-polytechnic\`.
+---
 
-Your folder should look like:
-```
-C:\dspace\harare-polytechnic\
-  docker-compose.yml
-  config.yml
-  .env
-  dspace-config\
-    local.cfg
-  setup-communities.sh
-```
+## Step 3 — Deploy DSpace
 
-### 5. Create the .env file
-Copy `.env.example` to `.env`:
-```powershell
-Copy-Item C:\dspace\harare-polytechnic\.env.example C:\dspace\harare-polytechnic\.env
-```
-Open `.env` in Notepad and confirm the password.
+```bash
+# Clone the repository
+git clone <your-repo-url> /opt/harare-polytechnic-dspace
+cd /opt/harare-polytechnic-dspace/harare-polytechnic
 
-### 6. Start DSpace
-```powershell
-cd C:\dspace\harare-polytechnic
+# Create the .env file
+cp .env.example .env
+# Edit if needed:
+nano .env
+
+# Start everything
 docker compose up -d
 ```
 
-First run downloads ~3 GB of images. Wait 3–5 minutes.
+First run downloads ~3 GB of images. Allow 5–10 minutes.
 
-### 7. Check it's running
-```powershell
-docker ps
-```
-All four containers should show `healthy` or `Up`:
-- `hpoly-dspace`
-- `hpoly-dspacedb`
-- `hpoly-dspacesolr`
-- `hpoly-angular`
+---
 
-Watch DSpace start:
-```powershell
-docker logs -f hpoly-dspace
+## Step 4 — Wait for DSpace to start
+
+```bash
+docker logs -f hpoly-dspace 2>&1 | grep -E "Started|ERROR"
 ```
+
 Wait for: `Started ServerBootApplication`
 
 ---
 
-## Create the Administrator Account
+## Step 5 — Create the administrator account
 
-```powershell
+```bash
 docker exec -it hpoly-dspace /dspace/bin/dspace create-administrator
 ```
 
@@ -88,56 +82,46 @@ Enter:
 
 ---
 
-## Access the Site
+## Step 6 — Create faculty communities
 
-| URL | Purpose |
-|-----|---------|
-| http://localhost:4000 | Main website (Angular UI) |
-| http://localhost:8080/server | REST API |
-
-Log in at: http://localhost:4000/login
-
----
-
-## Create Faculty Communities
-
-Run from PowerShell (requires Git Bash or WSL):
 ```bash
 bash setup-communities.sh
 ```
 
-Or from WSL terminal:
-```bash
-cd /mnt/c/dspace/harare-polytechnic
-bash setup-communities.sh
+---
+
+## Access the site
+
+From any PC on the 192.168.26.x network:
+
+**http://192.168.26.3:4000**
+
+Log in at: http://192.168.26.3:4000/login
+
+---
+
+## LAN hostname access (optional)
+
+To access via `http://hrepolyREP:4000` instead of the IP, add to the `hosts` file on each client PC:
+
+- **Windows**: `C:\Windows\System32\drivers\etc\hosts`
+- **Linux/Mac**: `/etc/hosts`
+
+Add this line:
+```
+192.168.26.3  hrepolyREP
 ```
 
 ---
 
 ## Stop / Start
 
-```powershell
+```bash
 # Stop
 docker compose down
 
-# Start again
+# Start
 docker compose up -d
 ```
 
-Data is preserved in Docker volumes — stopping containers does not delete anything.
-
----
-
-## Troubleshooting
-
-**Site not loading after 5 minutes:**
-```powershell
-docker logs hpoly-dspace --tail 30
-docker logs hpoly-angular --tail 30
-```
-
-**Reset everything (WARNING — deletes all data):**
-```powershell
-docker compose down -v
-docker compose up -d
-```
+Data is preserved in Docker volumes.

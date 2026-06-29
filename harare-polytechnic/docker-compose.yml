@@ -20,14 +20,16 @@ services:
     networks:
       hpoly-net:
         aliases:
-          - hpoly-dspace
+          # Docker DNS resolves this hostname to the dspace container for SSR.
+          # LAN clients resolve it to 192.168.26.3 via the ESXi host's DNS/WINS.
+          - hrepolyREP
     ports:
       - "0.0.0.0:8080:8080"
       - "127.0.0.1:8000:8000"
     environment:
       dspace__P__dir: /dspace
-      dspace__P__server__P__url: http://localhost:8080/server
-      dspace__P__ui__P__url: http://localhost:4000
+      dspace__P__server__P__url: http://hrepolyREP:8080/server
+      dspace__P__ui__P__url: http://192.168.26.3:4000
       dspace__P__name: 'Harare Polytechnic DSpace'
       db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
       db__P__password: '${POSTGRES_PASSWORD}'
@@ -104,8 +106,10 @@ services:
       DSPACE_UI_HOST: "0.0.0.0"
       DSPACE_UI_PORT: "4000"
       DSPACE_UI_NAMESPACE: "/"
+      # hrepolyREP resolves to the dspace container via Docker DNS for SSR,
+      # and to 192.168.26.3 via LAN DNS for browser clients.
       DSPACE_REST_SSL: "false"
-      DSPACE_REST_HOST: "localhost"
+      DSPACE_REST_HOST: "hrepolyREP"
       DSPACE_REST_PORT: "8080"
       DSPACE_REST_NAMESPACE: "/server"
     volumes:
