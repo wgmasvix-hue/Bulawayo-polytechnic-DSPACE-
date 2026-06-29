@@ -38,6 +38,10 @@ services:
       - "144.91.125.128:host-gateway"
     volumes:
       - ./config.yml:/app/config/config.yml:ro
+      # BPoly branding — logo injected at all known DSpace Angular asset paths
+      - ./assets/bpoly-logo.svg:/app/dist/browser/themes/dspace/assets/images/dspace-logo.png:ro
+      - ./assets/bpoly-logo.svg:/app/dist/browser/assets/images/dspace-logo.png:ro
+      - ./assets/favicon.svg:/app/dist/browser/favicon.ico:ro
 
     # Expose Angular on all interfaces so it is reachable at both:
     #   http://144.91.125.128:4000  (direct IP access)
