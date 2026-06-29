@@ -7,12 +7,11 @@ ui:
   namespace: /
 
 rest:
-  # The domain is used as the REST host for both SSR and browser clients.
-  # Inside Docker, it resolves to the dspace container via a network alias.
-  # Browser clients reach it on port 8080 via public DNS.
-  # TODO: set ssl: true and port: 443 once nginx + TLS is running.
+  # Use server IP so browsers can reach the REST API directly without DNS.
+  # SSR reaches DSpace via host-gateway (see extra_hosts in docker-compose-angular-prod.yml).
+  # TODO: set ssl: true, host: domain, port: 443 once nginx + TLS is running.
   ssl: false
-  host: bulawayo-polytechnic-repository.dare.co.zw
+  host: 144.91.125.128
   port: 8080
   namespace: /server
 

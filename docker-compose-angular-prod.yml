@@ -30,10 +30,12 @@ services:
       #   DSPACE_REST_PORT: "443"
       #   (and bind 8080 to 127.0.0.1 in docker-compose.yml)
       DSPACE_REST_SSL: "false"
-      DSPACE_REST_HOST: "bulawayo-polytechnic-repository.dare.co.zw"
+      DSPACE_REST_HOST: "144.91.125.128"
       DSPACE_REST_PORT: "8080"
       DSPACE_REST_NAMESPACE: "/server"
 
+    extra_hosts:
+      - "144.91.125.128:host-gateway"
     volumes:
       - ./config.yml:/app/config/config.yml:ro
 
