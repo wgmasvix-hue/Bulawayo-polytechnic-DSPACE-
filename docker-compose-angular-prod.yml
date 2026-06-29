@@ -1,6 +1,9 @@
 services:
   dspace-angular:
-    image: dspace/dspace-angular:dspace-8.1-dist
+    build:
+      context: .
+      dockerfile: Dockerfile.angular
+    image: bpoly-dspace-angular:latest
     container_name: dspace-angular
     restart: unless-stopped
 
