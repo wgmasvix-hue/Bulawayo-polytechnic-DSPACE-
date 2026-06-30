@@ -8,46 +8,27 @@ services:
     restart: unless-stopped
 
     environment:
-      # UI server (Node.js) listens on all interfaces inside the container.
-      # nginx terminates TLS externally and proxies to port 4000.
       DSPACE_UI_SSL: "false"
       DSPACE_UI_HOST: "0.0.0.0"
       DSPACE_UI_PORT: "4000"
       DSPACE_UI_NAMESPACE: "/"
 
-      # REST API URL — same value used by both SSR (Node.js inside Docker) and
-      # browser JavaScript on the client.
-      #
-      # Inside Docker, 'bulawayo-polytechnic-repository.dare.co.zw' resolves to
-      # the dspace container via the Docker network alias (see docker-compose.yml),
-      # so SSR calls never leave the host.
-      #
-      # Browser clients resolve the same hostname via public DNS to 144.91.125.128
-      # and reach port 8080 directly.
-      #
-      # TODO: once nginx + TLS is deployed, change to:
-      #   DSPACE_REST_SSL:  "true"
-      #   DSPACE_REST_PORT: "443"
-      #   (and bind 8080 to 127.0.0.1 in docker-compose.yml)
-      DSPACE_REST_SSL: "false"
-      DSPACE_REST_HOST: "144.91.125.128"
-      DSPACE_REST_PORT: "8080"
+      DSPACE_REST_SSL: "true"
+      DSPACE_REST_HOST: "bulawayo-polytechnic-repository.dare.co.zw"
+      DSPACE_REST_PORT: "443"
       DSPACE_REST_NAMESPACE: "/server"
 
-    extra_hosts:
-      - "144.91.125.128:host-gateway"
+    ports:
+      - "4000:4000"
+
     volumes:
       - ./config.yml:/app/config/config.yml:ro
-      # BPoly branding — logo injected at all known DSpace Angular asset paths
       - ./assets/bpoly-logo.svg:/app/dist/browser/themes/dspace/assets/images/dspace-logo.png:ro
       - ./assets/bpoly-logo.svg:/app/dist/browser/assets/images/dspace-logo.png:ro
       - ./assets/favicon.svg:/app/dist/browser/favicon.ico:ro
 
-    # Expose Angular on all interfaces so it is reachable at both:
-    #   http://144.91.125.128:4000  (direct IP access)
-    #   https://bulawayo-polytechnic-repository.dare.co.zw  (via nginx)
-    ports:
-      - "0.0.0.0:4000:4000"
+    extra_hosts:
+      - "bulawayo-polytechnic-repository.dare.co.zw:host-gateway"
 
     depends_on:
       dspace:

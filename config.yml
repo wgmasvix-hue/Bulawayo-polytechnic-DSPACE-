@@ -1,35 +1,11 @@
 ui:
-  # The Angular Node.js server listens on all interfaces inside the container;
-  # nginx (or another reverse proxy) terminates TLS and forwards requests to port 4000.
-  ssl: false
-  host: 0.0.0.0
-  port: 4000
+  ssl: true
+  host: bulawayo-polytechnic-repository.dare.co.zw
+  port: 443
   namespace: /
 
 rest:
-  # Use server IP so browsers can reach the REST API directly without DNS.
-  # SSR reaches DSpace via host-gateway (see extra_hosts in docker-compose-angular-prod.yml).
-  # TODO: set ssl: true, host: domain, port: 443 once nginx + TLS is running.
-  ssl: false
-  host: 144.91.125.128
-  port: 8080
+  ssl: true
+  host: bulawayo-polytechnic-repository.dare.co.zw
+  port: 443
   namespace: /server
-
-cache:
-  msToLive:
-    default: 900000
-
-production: true
-
-defaultLanguage: en
-
-theme:
-  name: dspace
-
-mediaViewer:
-  image: false
-  video: false
-
-info:
-  enableEndUserAgreement: true
-  enablePrivacyStatement: true

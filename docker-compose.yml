@@ -39,6 +39,10 @@ services:
       - "0.0.0.0:8080:8080"
       # Port 8000 is the Handle Server — only needed if a real Handle prefix is registered.
       - "127.0.0.1:8000:8000"
+
+    env_file:
+       - .env
+
     environment:
       # __P__ => "." and __D__ => "-" in property names.
       # See https://github.com/DSpace/DSpace/blob/main/dspace/config/config-definition.xml
