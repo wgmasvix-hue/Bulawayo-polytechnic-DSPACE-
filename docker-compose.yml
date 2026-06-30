@@ -48,12 +48,9 @@ services:
       # See https://github.com/DSpace/DSpace/blob/main/dspace/config/config-definition.xml
       dspace__P__dir: /dspace
       # Production URLs — must match the public hostname served by nginx/reverse-proxy.
-      dspace__P__server__P__url: http://144.91.125.128:8080/server
-      dspace__P__ui__P__url: http://144.91.125.128:4000
-      dspace__P__name: 'Bulawayo Polytechnic DSpace'
-      db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
-      db__P__password: '${POSTGRES_PASSWORD}'
-      solr__P__server: http://dspacesolr:8983/solr
+      dspace__P__server__P__url: https://bulawayo-polytechnic-repository.dare.co.zw/server
+      dspace__P__ui__P__url: https://bulawayo-polytechnic-repository.dare.co.zw
+
       # Trust X-Forwarded-For from the dspacenet subnet (nginx reverse proxy).
       proxies__P__trusted__P__ipranges: '172.23.0'
       LOGGING_CONFIG: /dspace/config/log4j2-container.xml
