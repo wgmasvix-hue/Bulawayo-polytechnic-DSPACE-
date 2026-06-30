@@ -6,7 +6,7 @@ ui:
 
 rest:
   ssl: false
-  host: hrepolyREP
+  host: 172.21.111.21
   port: 8080
   namespace: /server
 

@@ -28,8 +28,8 @@ services:
       - "127.0.0.1:8000:8000"
     environment:
       dspace__P__dir: /dspace
-      dspace__P__server__P__url: http://hrepolyREP:8080/server
-      dspace__P__ui__P__url: http://192.168.26.3:4000
+      dspace__P__server__P__url: http://172.21.111.21:8080/server
+      dspace__P__ui__P__url: http://172.21.111.21:4000
       dspace__P__name: 'Harare Polytechnic DSpace'
       db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
       db__P__password: '${POSTGRES_PASSWORD}'
@@ -109,9 +109,11 @@ services:
       # hrepolyREP resolves to the dspace container via Docker DNS for SSR,
       # and to 192.168.26.3 via LAN DNS for browser clients.
       DSPACE_REST_SSL: "false"
-      DSPACE_REST_HOST: "hrepolyREP"
+      DSPACE_REST_HOST: "172.21.111.21"
       DSPACE_REST_PORT: "8080"
       DSPACE_REST_NAMESPACE: "/server"
+    extra_hosts:
+      - "172.21.111.21:host-gateway"
     volumes:
       - ./config.yml:/app/config/config.yml:ro
     ports:
