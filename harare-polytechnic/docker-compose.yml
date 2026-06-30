@@ -40,7 +40,7 @@ services:
     tty: true
     volumes:
       - assetstore:/dspace/assetstore
-      - ./dspace-config:/dspace/config
+      - ./dspace-config/local.cfg:/dspace/config/local.cfg
     entrypoint:
       - /bin/bash
       - '-c'
