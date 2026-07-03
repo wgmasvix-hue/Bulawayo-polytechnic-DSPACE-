@@ -1,0 +1,132 @@
+networks:
+  dspacenet:
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
+
+services:
+  dspace:
+    container_name: dspace
+    image: dspace/dspace:dspace-8.1
+    restart: unless-stopped
+    depends_on:
+      - dspacedb
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/server/api || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+    networks:
+      dspacenet:
+        aliases:
+          - dspace-backend
+    ports:
+      - "0.0.0.0:8080:8080"
+      - "127.0.0.1:8000:8000"
+    environment:
+      dspace__P__dir: /dspace
+      dspace__P__server__P__url: http://${SERVER_IP}:8080/server
+      dspace__P__ui__P__url: http://${SERVER_IP}:4000
+      dspace__P__name: 'Bulawayo Polytechnic DSpace'
+      db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
+      db__P__password: '${POSTGRES_PASSWORD}'
+      solr__P__server: http://dspacesolr:8983/solr
+      proxies__P__trusted__P__ipranges: '172.23.0'
+      LOGGING_CONFIG: /dspace/config/log4j2-container.xml
+    stdin_open: true
+    tty: true
+    volumes:
+      - assetstore:/dspace/assetstore
+      - ./dspace/config/local.cfg:/dspace/config/local.cfg
+    entrypoint:
+      - /bin/bash
+      - '-c'
+      - |
+        while (!</dev/tcp/dspacedb/5432) > /dev/null 2>&1; do sleep 1; done;
+        /dspace/bin/dspace database migrate
+        java -jar /dspace/webapps/server-boot.jar --dspace.dir=/dspace
+
+  dspacedb:
+    container_name: dspacedb
+    image: dspace/dspace-postgres-pgcrypto:dspace-8.1
+    restart: unless-stopped
+    environment:
+      PGDATA: /pgdata
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+    networks:
+      dspacenet:
+        aliases:
+          - dspacedb
+    stdin_open: true
+    tty: true
+    volumes:
+      - pgdata:/pgdata
+
+  dspacesolr:
+    container_name: dspacesolr
+    image: dspace/dspace-solr:dspace-8.1
+    restart: unless-stopped
+    networks:
+      dspacenet:
+        aliases:
+          - dspacesolr
+    stdin_open: true
+    tty: true
+    working_dir: /var/solr/data
+    volumes:
+      - solr_data:/var/solr/data
+    entrypoint:
+      - /bin/bash
+      - '-c'
+      - |
+        init-var-solr
+        precreate-core authority /opt/solr/server/solr/configsets/authority
+        cp -r /opt/solr/server/solr/configsets/authority/* authority
+        precreate-core oai /opt/solr/server/solr/configsets/oai
+        cp -r /opt/solr/server/solr/configsets/oai/* oai
+        precreate-core search /opt/solr/server/solr/configsets/search
+        cp -r /opt/solr/server/solr/configsets/search/* search
+        precreate-core statistics /opt/solr/server/solr/configsets/statistics
+        cp -r /opt/solr/server/solr/configsets/statistics/* statistics
+        precreate-core qaevent /opt/solr/server/solr/configsets/qaevent
+        cp -r /opt/solr/server/solr/configsets/qaevent/* qaevent
+        precreate-core suggestion /opt/solr/server/solr/configsets/suggestion
+        cp -r /opt/solr/server/solr/configsets/suggestion/* suggestion
+        exec solr -f
+
+  dspace-angular:
+    image: bpoly-dspace-angular:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.angular
+    container_name: dspace-angular
+    restart: unless-stopped
+    environment:
+      DSPACE_UI_SSL: "false"
+      DSPACE_UI_HOST: "0.0.0.0"
+      DSPACE_UI_PORT: "4000"
+      DSPACE_UI_NAMESPACE: "/"
+      DSPACE_REST_SSL: "false"
+      DSPACE_REST_HOST: "${SERVER_IP}"
+      DSPACE_REST_PORT: "8080"
+      DSPACE_REST_NAMESPACE: "/server"
+    extra_hosts:
+      - "${SERVER_IP}:host-gateway"
+    volumes:
+      - ./config.yml:/app/config/config.yml:ro
+      - ./assets/bpoly-logo.svg:/app/dist/browser/themes/dspace/assets/images/dspace-logo.png:ro
+      - ./assets/bpoly-logo.svg:/app/dist/browser/assets/images/dspace-logo.png:ro
+      - ./assets/favicon.svg:/app/dist/browser/favicon.ico:ro
+    ports:
+      - "0.0.0.0:4000:4000"
+    depends_on:
+      dspace:
+        condition: service_healthy
+    networks:
+      - dspacenet
+
+volumes:
+  assetstore:
+  pgdata:
+  solr_data:
