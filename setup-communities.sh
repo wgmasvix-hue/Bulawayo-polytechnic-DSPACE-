@@ -21,9 +21,10 @@ trap 'rm -f "$COOKIE_JAR"' EXIT
 # ── helpers ──────────────────────────────────────────────────────────────────
 
 get_csrf() {
-  curl -s -c "$COOKIE_JAR" -b "$COOKIE_JAR" \
-    "${DSPACE_URL}/api/authn/status" -o /dev/null
-  grep -i dspace-xsrf-token "$COOKIE_JAR" | awk '{print $NF}'
+  # Extract XSRF token from response headers (DSpace 8 returns it there)
+  curl -s -c "$COOKIE_JAR" -b "$COOKIE_JAR" -D - \
+    "${DSPACE_URL}/api/authn/status" -o /dev/null \
+    | grep -i "dspace-xsrf-token:" | awk '{print $2}' | tr -d '\r'
 }
 
 login() {
