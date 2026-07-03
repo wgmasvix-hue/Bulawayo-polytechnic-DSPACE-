@@ -13,7 +13,9 @@ set -euo pipefail
 
 REPO_URL="https://github.com/wgmasvix-hue/bulawayo-polytechnic-dspace-.git"
 BRANCH="claude/dspace-deployment-review-48qeth"
-INSTALL_DIR="$HOME/bpoly-dspace"
+# Installation directory can be overridden by wrappers (e.g. ChengetAi
+# Deploy points this at the deployment's own engine directory).
+INSTALL_DIR="${INSTALL_DIR:-$HOME/bpoly-dspace}"
 DB_PASSWORD="BpolyRepo2025!"
 
 # ── Colours ───────────────────────────────────────────────────────────────────
