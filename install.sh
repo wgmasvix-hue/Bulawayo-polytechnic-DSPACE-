@@ -116,6 +116,9 @@ echo ""
 success "DSpace backend is running!"
 
 # ── 8. Create admin account ───────────────────────────────────────────────────
+# Prompts are skipped for any value already provided via environment variables
+# (ADMIN_EMAIL, ADMIN_FIRST_NAME, ADMIN_LAST_NAME, ADMIN_PASS), so a wrapper
+# like ChengetAi Deploy can run this installer non-interactively.
 echo ""
 echo "============================================================"
 echo "  Create Administrator Account"
@@ -123,14 +126,27 @@ echo "============================================================"
 echo "  This account will be used to manage the repository."
 echo ""
 
-read -rp "  Admin email address : " ADMIN_EMAIL
-read -rsp "  Admin password      : " ADMIN_PASS
-echo ""
-read -rsp "  Confirm password    : " ADMIN_PASS2
-echo ""
+if [[ -z "${ADMIN_EMAIL:-}" ]]; then
+  read -rp "  Admin email address : " ADMIN_EMAIL
+fi
 
-if [[ "$ADMIN_PASS" != "$ADMIN_PASS2" ]]; then
-  error "Passwords do not match. Re-run the installer."
+if [[ -z "${ADMIN_FIRST_NAME:-}" ]]; then
+  read -rp "  First name          : " ADMIN_FIRST_NAME
+fi
+
+if [[ -z "${ADMIN_LAST_NAME:-}" ]]; then
+  read -rp "  Last name           : " ADMIN_LAST_NAME
+fi
+
+if [[ -z "${ADMIN_PASS:-}" ]]; then
+  read -rsp "  Admin password      : " ADMIN_PASS
+  echo ""
+  read -rsp "  Confirm password    : " ADMIN_PASS2
+  echo ""
+
+  if [[ "$ADMIN_PASS" != "$ADMIN_PASS2" ]]; then
+    error "Passwords do not match. Re-run the installer."
+  fi
 fi
 
 # Check if admin already exists and update password, else create new
@@ -141,8 +157,8 @@ if docker exec dspace /dspace/bin/dspace user --list 2>/dev/null | grep -q "$ADM
 else
   docker exec -i dspace /dspace/bin/dspace create-administrator << EOF
 $ADMIN_EMAIL
-Admin
-User
+$ADMIN_FIRST_NAME
+$ADMIN_LAST_NAME
 y
 $ADMIN_PASS
 $ADMIN_PASS
