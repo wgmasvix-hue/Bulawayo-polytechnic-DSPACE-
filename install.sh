@@ -16,7 +16,12 @@ BRANCH="claude/dspace-deployment-review-48qeth"
 # Installation directory can be overridden by wrappers (e.g. ChengetAi
 # Deploy points this at the deployment's own engine directory).
 INSTALL_DIR="${INSTALL_DIR:-$HOME/bpoly-dspace}"
-DB_PASSWORD="BpolyRepo2025!"
+
+# Ports and the instance name are overridable by wrappers/operators;
+# the defaults keep existing installations working unchanged.
+UI_PORT="${UI_PORT:-4000}"
+REST_PORT="${REST_PORT:-8080}"
+DSPACE_NAME="${DSPACE_NAME:-Bulawayo Polytechnic DSpace}"
 
 # ── Colours ───────────────────────────────────────────────────────────────────
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
@@ -66,9 +71,9 @@ fi
 # ── 3. Clone / update repo ────────────────────────────────────────────────────
 if [[ -d "$INSTALL_DIR/.git" ]]; then
   info "Updating existing installation at $INSTALL_DIR..."
-  # .env and config.yml are regenerated below — discard local edits so the
-  # pull cannot conflict on them.
-  git -C "$INSTALL_DIR" checkout -- .env config.yml 2>/dev/null || true
+  # config.yml is regenerated below — discard local edits so the pull
+  # cannot conflict on it. (.env is untracked and keeps its secrets.)
+  git -C "$INSTALL_DIR" checkout -- config.yml 2>/dev/null || true
   git -C "$INSTALL_DIR" fetch origin "$BRANCH"
   git -C "$INSTALL_DIR" checkout "$BRANCH"
   git -C "$INSTALL_DIR" pull origin "$BRANCH"
@@ -81,10 +86,23 @@ success "Repository ready."
 
 # ── 4. Write .env ─────────────────────────────────────────────────────────────
 info "Configuring for IP: $SERVER_IP ..."
+
+# The database password is generated once per installation and preserved
+# on re-runs. It lives only in this server's .env (never in git).
+if [[ -f .env ]] && grep -q '^POSTGRES_PASSWORD=' .env; then
+  DB_PASSWORD=$(grep '^POSTGRES_PASSWORD=' .env | head -1 | cut -d= -f2-)
+else
+  DB_PASSWORD=$(head -c 32 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 24)
+fi
+
 cat > .env << EOF
 SERVER_IP=${SERVER_IP}
 POSTGRES_PASSWORD=${DB_PASSWORD}
+UI_PORT=${UI_PORT}
+REST_PORT=${REST_PORT}
+DSPACE_NAME=${DSPACE_NAME}
 EOF
+chmod 600 .env
 
 # Write the UI config for the campus stack (plain http on the LAN IP).
 # The compose file's DSPACE_UI_*/DSPACE_REST_* environment variables take
@@ -99,7 +117,7 @@ ui:
 rest:
   ssl: false
   host: ${SERVER_IP}
-  port: 8080
+  port: ${REST_PORT}
   namespace: /server
 EOF
 
@@ -123,7 +141,7 @@ success "Containers started."
 # ── 7. Wait for DSpace backend ────────────────────────────────────────────────
 info "Waiting for DSpace backend to start (this takes 3-5 minutes)..."
 WAIT=0
-until curl -sf http://localhost:8080/server/api &>/dev/null; do
+until curl -sf "http://localhost:${REST_PORT}/server/api" &>/dev/null; do
   sleep 10
   WAIT=$((WAIT + 10))
   if [[ $WAIT -ge 360 ]]; then
@@ -188,7 +206,7 @@ fi
 # ── 9. Set up faculty communities ─────────────────────────────────────────────
 echo ""
 info "Setting up Bulawayo Polytechnic faculty communities..."
-DSPACE_URL="http://localhost:8080/server" \
+DSPACE_URL="http://localhost:${REST_PORT}/server" \
   ADMIN_EMAIL="$ADMIN_EMAIL" \
   ADMIN_PASS="$ADMIN_PASS" \
   bash setup-communities.sh || warn "Communities script had errors — check manually."
@@ -199,8 +217,8 @@ echo "============================================================"
 echo -e "  ${GREEN}Bulawayo Polytechnic DSpace is READY!${NC}"
 echo "============================================================"
 echo ""
-echo "  UI (browser):  http://${SERVER_IP}:4000"
-echo "  REST API:      http://${SERVER_IP}:8080/server"
+echo "  UI (browser):  http://${SERVER_IP}:${UI_PORT}"
+echo "  REST API:      http://${SERVER_IP}:${REST_PORT}/server"
 echo "  Admin login:   $ADMIN_EMAIL"
 echo ""
 echo "  Share the UI URL with anyone on the campus network."

@@ -22,13 +22,13 @@ services:
         aliases:
           - dspace-backend
     ports:
-      - "0.0.0.0:8080:8080"
+      - "0.0.0.0:${REST_PORT:-8080}:8080"
       - "127.0.0.1:8000:8000"
     environment:
       dspace__P__dir: /dspace
-      dspace__P__server__P__url: http://${SERVER_IP}:8080/server
-      dspace__P__ui__P__url: http://${SERVER_IP}:4000
-      dspace__P__name: 'Bulawayo Polytechnic DSpace'
+      dspace__P__server__P__url: http://${SERVER_IP}:${REST_PORT:-8080}/server
+      dspace__P__ui__P__url: http://${SERVER_IP}:${UI_PORT:-4000}
+      dspace__P__name: '${DSPACE_NAME:-Bulawayo Polytechnic DSpace}'
       db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
       db__P__password: '${POSTGRES_PASSWORD}'
       solr__P__server: http://dspacesolr:8983/solr
@@ -109,7 +109,7 @@ services:
       DSPACE_UI_NAMESPACE: "/"
       DSPACE_REST_SSL: "false"
       DSPACE_REST_HOST: "${SERVER_IP}"
-      DSPACE_REST_PORT: "8080"
+      DSPACE_REST_PORT: "${REST_PORT:-8080}"
       DSPACE_REST_NAMESPACE: "/server"
     extra_hosts:
       - "${SERVER_IP}:host-gateway"
@@ -119,7 +119,7 @@ services:
       - ./assets/bpoly-logo.png:/app/dist/browser/assets/images/dspace-logo.png:ro
       - ./assets/favicon.png:/app/dist/browser/favicon.ico:ro
     ports:
-      - "0.0.0.0:4000:4000"
+      - "0.0.0.0:${UI_PORT:-4000}:4000"
     depends_on:
       dspace:
         condition: service_healthy
