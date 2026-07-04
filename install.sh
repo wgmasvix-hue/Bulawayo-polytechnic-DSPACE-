@@ -66,6 +66,9 @@ fi
 # ── 3. Clone / update repo ────────────────────────────────────────────────────
 if [[ -d "$INSTALL_DIR/.git" ]]; then
   info "Updating existing installation at $INSTALL_DIR..."
+  # .env and config.yml are regenerated below — discard local edits so the
+  # pull cannot conflict on them.
+  git -C "$INSTALL_DIR" checkout -- .env config.yml 2>/dev/null || true
   git -C "$INSTALL_DIR" fetch origin "$BRANCH"
   git -C "$INSTALL_DIR" checkout "$BRANCH"
   git -C "$INSTALL_DIR" pull origin "$BRANCH"
@@ -83,8 +86,22 @@ SERVER_IP=${SERVER_IP}
 POSTGRES_PASSWORD=${DB_PASSWORD}
 EOF
 
-# Update Angular config.yml REST host
-sed -i "s/^  host: .*/  host: ${SERVER_IP}/" config.yml
+# Write the UI config for the campus stack (plain http on the LAN IP).
+# The compose file's DSPACE_UI_*/DSPACE_REST_* environment variables take
+# precedence at runtime; this keeps the mounted file consistent with them.
+cat > config.yml << EOF
+ui:
+  ssl: false
+  host: 0.0.0.0
+  port: 4000
+  namespace: /
+
+rest:
+  ssl: false
+  host: ${SERVER_IP}
+  port: 8080
+  namespace: /server
+EOF
 
 success "Configuration written."
 

@@ -23,9 +23,9 @@ services:
 
     volumes:
       - ./config.yml:/app/config/config.yml:ro
-      - ./assets/bpoly-logo.svg:/app/dist/browser/themes/dspace/assets/images/dspace-logo.png:ro
-      - ./assets/bpoly-logo.svg:/app/dist/browser/assets/images/dspace-logo.png:ro
-      - ./assets/favicon.svg:/app/dist/browser/favicon.ico:ro
+      - ./assets/bpoly-logo.png:/app/dist/browser/themes/dspace/assets/images/dspace-logo.png:ro
+      - ./assets/bpoly-logo.png:/app/dist/browser/assets/images/dspace-logo.png:ro
+      - ./assets/favicon.png:/app/dist/browser/favicon.ico:ro
 
     extra_hosts:
       - "bulawayo-polytechnic-repository.dare.co.zw:host-gateway"
