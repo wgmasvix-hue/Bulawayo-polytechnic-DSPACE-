@@ -1,0 +1,36 @@
+#!/bin/bash
+
+COMMAND=$1
+PLATFORM=$2
+
+case "$COMMAND" in
+
+deploy)
+    bash engine/deploy.sh "$PLATFORM"
+    ;;
+
+list)
+    ls templates
+    ;;
+
+status)
+    bash scripts/status.sh "$2"
+    ;;
+
+remove)
+    bash scripts/remove.sh "$2"
+    ;;
+
+help|*)
+    echo
+    echo "ChengetAI Deploy"
+    echo
+    echo "Usage:"
+    echo
+    echo " chengetai deploy dspace"
+    echo " chengetai deploy koha"
+    echo " chengetai deploy moodle"
+    echo " chengetai list"
+    echo " chengetai status"
+    ;;
+esac
