@@ -8,7 +8,7 @@
 #
 # TLS certificate setup (Let's Encrypt example):
 #   1. Install Certbot on the host: https://certbot.eff.org/
-#   2. Run: certbot certonly --standalone -d bulawayo-polytechnic-repository.dare.co.zw
+#   2. Run: certbot certonly --standalone -d unifiedrepo.dare.co.zw
 #   3. Certificates are written to /etc/letsencrypt/live/<domain>/
 #   4. The volume mounts below make them available inside the nginx container.
 #   5. Set up a Certbot renewal cron/systemd timer and reload nginx after renewal:
@@ -29,8 +29,8 @@ services:
       # Main site config (generated from nginx.conf in this repository).
       - ./nginx.conf:/etc/nginx/conf.d/dspace.conf:ro
       # TLS certificates from Let's Encrypt (adjust paths if using another CA).
-      - /etc/letsencrypt/live/bulawayo-polytechnic-repository.dare.co.zw/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
-      - /etc/letsencrypt/live/bulawayo-polytechnic-repository.dare.co.zw/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+      - /etc/letsencrypt/live/unifiedrepo.dare.co.zw/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/unifiedrepo.dare.co.zw/privkey.pem:/etc/nginx/certs/privkey.pem:ro
     depends_on:
       - dspace
       - dspace-angular
@@ -40,4 +40,4 @@ services:
 networks:
   dspacenet:
     external: true
-    name: bulawayo-polytechnic-dspace-official_dspacenet
+    name: dare-institutional-repository_dspacenet

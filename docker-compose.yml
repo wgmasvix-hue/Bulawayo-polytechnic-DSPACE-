@@ -4,7 +4,7 @@ networks:
       config:
         # Custom subnet so the REST API can trust X-Forwarded-For from this range.
         # If you change this value also update proxies.trusted.ipranges in local.cfg.
-        - subnet: 172.23.0.0/16
+        - subnet: 172.30.0.0/16
 services:
   # DSpace (backend) webapp container
   dspace:
@@ -30,7 +30,7 @@ services:
           # when queried from within the dspacenet network (e.g. from dspace-angular
           # during SSR).  Public DNS still resolves it to the server's external IP
           # for browser clients — so a single REST URL works for both.
-          - bulawayo-polytechnic-repository.dare.co.zw
+          - unifiedrepo.dare.co.zw
     # Port 8080 is exposed on all interfaces so browser-side Angular JS can reach the
     # REST API at http://144.91.125.128:8080/server.
     # TODO: once nginx + TLS is running, bind this back to 127.0.0.1 and let nginx
@@ -48,11 +48,11 @@ services:
       # See https://github.com/DSpace/DSpace/blob/main/dspace/config/config-definition.xml
       dspace__P__dir: /dspace
       # Production URLs — must match the public hostname served by nginx/reverse-proxy.
-      dspace__P__server__P__url: https://bulawayo-polytechnic-repository.dare.co.zw/server
-      dspace__P__ui__P__url: https://bulawayo-polytechnic-repository.dare.co.zw
+      dspace__P__server__P__url: https://unifiedrepo.dare.co.zw/server
+      dspace__P__ui__P__url: https://unifiedrepo.dare.co.zw
 
       # Trust X-Forwarded-For from the dspacenet subnet (nginx reverse proxy).
-      proxies__P__trusted__P__ipranges: '172.23.0'
+      proxies__P__trusted__P__ipranges: '172.30.0'
       LOGGING_CONFIG: /dspace/config/log4j2-container.xml
     stdin_open: true
     tty: true

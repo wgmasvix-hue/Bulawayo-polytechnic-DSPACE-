@@ -1,0 +1,41 @@
+services:
+  dspace-angular:
+    build:
+      context: .
+      dockerfile: Dockerfile.angular
+    image: bpoly-dspace-angular:latest
+    container_name: dspace-angular
+    restart: unless-stopped
+
+
+    environment:
+      DSPACE_UI_SSL: "false"
+      DSPACE_UI_HOST: "0.0.0.0"
+      DSPACE_UI_PORT: "4000"
+      DSPACE_UI_NAMESPACE: "/"
+
+      DSPACE_REST_SSL: "true"
+      DSPACE_REST_HOST: "bulawayo-polytechnic-repository.dare.co.zw"
+      DSPACE_REST_PORT: "443"
+      DSPACE_REST_NAMESPACE: "/server"
+
+    ports:
+      - "4000:4000"
+
+    volumes:
+      - ./config.yml:/app/config/config.yml:ro
+      - ./assets/bpoly-logo.svg:/app/dist/browser/themes/dspace/assets/images/dspace-logo.png:ro
+      - ./assets/bpoly-logo.svg:/app/dist/browser/assets/images/dspace-logo.png:ro
+      - ./assets/favicon.svg:/app/dist/browser/favicon.ico:ro
+
+    extra_hosts:
+      - "bulawayo-polytechnic-repository.dare.co.zw:host-gateway"
+
+
+    networks:
+      - dspacenet
+
+networks:
+  dspacenet:
+    external: true
+    name: dare-institutional-repository_dspacenet
