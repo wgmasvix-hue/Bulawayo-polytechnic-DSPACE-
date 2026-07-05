@@ -7,6 +7,7 @@ services:
     container_name: dspace-angular
     restart: unless-stopped
 
+
     environment:
       DSPACE_UI_SSL: "false"
       DSPACE_UI_HOST: "0.0.0.0"
@@ -14,7 +15,7 @@ services:
       DSPACE_UI_NAMESPACE: "/"
 
       DSPACE_REST_SSL: "true"
-      DSPACE_REST_HOST: "bulawayo-polytechnic-repository.dare.co.zw"
+      DSPACE_REST_HOST: "unifiedrepo.dare.co.zw"
       DSPACE_REST_PORT: "443"
       DSPACE_REST_NAMESPACE: "/server"
 
@@ -28,11 +29,8 @@ services:
       - ./assets/favicon.svg:/app/dist/browser/favicon.ico:ro
 
     extra_hosts:
-      - "bulawayo-polytechnic-repository.dare.co.zw:host-gateway"
+      - "unifiedrepo.dare.co.zw:host-gateway"
 
-    depends_on:
-      dspace:
-        condition: service_healthy
 
     networks:
       - dspacenet
@@ -40,4 +38,4 @@ services:
 networks:
   dspacenet:
     external: true
-    name: bulawayo-polytechnic-dspace-official_dspacenet
+    name: dare-institutional-repository_dspacenet

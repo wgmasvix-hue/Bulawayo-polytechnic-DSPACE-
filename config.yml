@@ -1,11 +1,11 @@
 ui:
   ssl: true
-  host: bulawayo-polytechnic-repository.dare.co.zw
+  host: unifiedrepo.dare.co.zw
   port: 443
   namespace: /
 
 rest:
   ssl: true
-  host: bulawayo-polytechnic-repository.dare.co.zw
+  host: unifiedrepo.dare.co.zw
   port: 443
   namespace: /server
