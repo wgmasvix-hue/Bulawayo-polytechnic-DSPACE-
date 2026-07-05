@@ -1,0 +1,63 @@
+name: DSpace
+id: dspace
+
+version: "8.1"
+
+description: |
+  Generic DSpace Institutional Repository
+  deployed by ChengetAI Deploy.
+
+docker:
+
+  backend:
+    image: dspace/dspace:dspace-8.1
+
+  frontend:
+    image: dspace/dspace-angular:dspace-8.1-dist
+
+  database:
+    image: dspace/dspace-postgres-pgcrypto:dspace-8.1
+
+  solr:
+    image: dspace/dspace-solr:dspace-8.1
+
+ports:
+
+  backend: 8080
+  frontend: 4000
+  postgres: 5432
+  solr: 8983
+
+branding:
+
+  logo: true
+  favicon: true
+  homepage: true
+  footer: true
+  colors: true
+
+ssl:
+
+  letsencrypt: true
+
+monitoring:
+
+  enabled: true
+
+backup:
+
+  enabled: true
+  schedule: "0 2 * * *"
+
+communities:
+
+  auto_create: true
+
+installer:
+
+  script: installers/dspace/install.sh
+
+post_install:
+
+  - scripts/apply-branding.sh
+  - scripts/create-communities.sh
