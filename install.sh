@@ -186,20 +186,25 @@ if [[ -z "${ADMIN_PASS:-}" ]]; then
   fi
 fi
 
-# Check if admin already exists and update password, else create new
+# Check if admin already exists and update password, else create new.
+#
+# NOTE: create-administrator MUST be run with command-line flags, not by piping
+# answers over stdin. DSpace's interactive prompt reads from the terminal via
+# System.console(), which is null when stdin is not a TTY (e.g. a here-doc or a
+# non-interactive installer), causing:
+#   NullPointerException: Cannot invoke "java.io.Console.readLine()" ... console is null
+# Passing -e -f -l -c -p makes DSpace skip the console prompt entirely.
 if docker exec dspace /dspace/bin/dspace user --list 2>/dev/null | grep -q "$ADMIN_EMAIL"; then
   docker exec dspace /dspace/bin/dspace user --modify \
     --email "$ADMIN_EMAIL" --newPassword "$ADMIN_PASS"
   success "Admin password updated for $ADMIN_EMAIL"
 else
-  docker exec -i dspace /dspace/bin/dspace create-administrator << EOF
-$ADMIN_EMAIL
-$ADMIN_FIRST_NAME
-$ADMIN_LAST_NAME
-y
-$ADMIN_PASS
-$ADMIN_PASS
-EOF
+  docker exec dspace /dspace/bin/dspace create-administrator \
+    -e "$ADMIN_EMAIL" \
+    -f "$ADMIN_FIRST_NAME" \
+    -l "$ADMIN_LAST_NAME" \
+    -c en \
+    -p "$ADMIN_PASS"
   success "Admin account created: $ADMIN_EMAIL"
 fi
 
