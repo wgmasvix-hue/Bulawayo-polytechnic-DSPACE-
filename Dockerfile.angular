@@ -14,3 +14,13 @@ COPY assets/favicon.png    /app/dist/browser/favicon.ico
 
 # Also drop copies under the common asset paths used by older DSpace Angular builds.
 COPY assets/bpoly-logo.png /app/dist/browser/themes/dspace/images/dspace-logo.png
+
+# ── Institutional colour theme (ChengetAi) ─────────────────────────────────
+# Ship the theme stylesheet and inject it into the SSR shell so every page
+# loads it AFTER the compiled styles (institution colours win). The file is
+# empty by default; `chengetai brand --primary ... --apply` fills it in. It is
+# also bind-mounted at runtime by the campus stack, so colour-only changes
+# don't need an image rebuild.
+COPY assets/theme.css /app/dist/browser/assets/chengetai-theme.css
+RUN sed -i 's#</head>#<link rel="stylesheet" href="/assets/chengetai-theme.css"></head>#' \
+    /app/dist/browser/index.html

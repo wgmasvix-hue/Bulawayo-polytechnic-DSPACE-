@@ -1,0 +1,7 @@
+/* ChengetAi institutional theme hook.
+ * This file is injected into the DSpace UI (see Dockerfile.angular) and
+ * bind-mounted at runtime by the campus stack, so a deployment's colours can
+ * change without recompiling Angular. By default it is EMPTY on purpose —
+ * the stock DSpace look is kept until `chengetai brand --primary ... --apply`
+ * generates a palette here from the deployment's branding profile.
+ */
