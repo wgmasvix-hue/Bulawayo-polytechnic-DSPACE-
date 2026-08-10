@@ -7,7 +7,7 @@ networks:
 services:
   dspace:
     container_name: hpoly-dspace
-    image: dspace/dspace:dspace-8.1
+    image: dspace/dspace:dspace-9.0
     restart: unless-stopped
     depends_on:
       - dspacedb
@@ -51,7 +51,7 @@ services:
 
   dspacedb:
     container_name: hpoly-dspacedb
-    image: dspace/dspace-postgres-pgcrypto:dspace-8.1
+    image: dspace/dspace-postgres-pgcrypto:dspace-9.0
     restart: unless-stopped
     environment:
       PGDATA: /pgdata
@@ -67,7 +67,7 @@ services:
 
   dspacesolr:
     container_name: hpoly-dspacesolr
-    image: dspace/dspace-solr:dspace-8.1
+    image: dspace/dspace-solr:dspace-9.0
     restart: unless-stopped
     networks:
       hpoly-net:
@@ -98,7 +98,7 @@ services:
         exec solr -f
 
   dspace-angular:
-    image: dspace/dspace-angular:dspace-8.1-dist
+    image: dspace/dspace-angular:dspace-9.0-dist
     container_name: hpoly-angular
     restart: unless-stopped
     environment:

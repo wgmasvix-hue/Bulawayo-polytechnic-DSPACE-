@@ -1,4 +1,4 @@
-FROM dspace/dspace-angular:dspace-8.1-dist
+FROM dspace/dspace-angular:dspace-9.0-dist
 
 # ── Bulawayo Polytechnic branding ──────────────────────────────────────────
 # Replace the default DSpace navbar logo with the BPoly shield + wordmark.

@@ -10,7 +10,7 @@ services:
   dspace:
     container_name: dspace
     # Use the production Dockerfile (not Dockerfile.test which enables JDWP remote debugging).
-    image: "${DOCKER_REGISTRY:-docker.io}/${DOCKER_OWNER:-dspace}/dspace:${DSPACE_VER:-dspace-8.1}"
+    image: "${DOCKER_REGISTRY:-docker.io}/${DOCKER_OWNER:-dspace}/dspace:${DSPACE_VER:-dspace-9.0}"
     build:
       context: .
       dockerfile: Dockerfile
@@ -76,7 +76,7 @@ services:
   # DSpace PostgreSQL database container
   dspacedb:
     container_name: dspacedb
-    image: "${DOCKER_REGISTRY:-docker.io}/${DOCKER_OWNER:-dspace}/dspace-postgres-pgcrypto:${DSPACE_VER:-dspace-8.1}"
+    image: "${DOCKER_REGISTRY:-docker.io}/${DOCKER_OWNER:-dspace}/dspace-postgres-pgcrypto:${DSPACE_VER:-dspace-9.0}"
     build:
       context: ./dspace/src/main/docker/dspace-postgres-pgcrypto/
     restart: unless-stopped
@@ -96,7 +96,7 @@ services:
   # DSpace Solr container
   dspacesolr:
     container_name: dspacesolr
-    image: "${DOCKER_REGISTRY:-docker.io}/${DOCKER_OWNER:-dspace}/dspace-solr:${DSPACE_VER:-dspace-8.1}"
+    image: "${DOCKER_REGISTRY:-docker.io}/${DOCKER_OWNER:-dspace}/dspace-solr:${DSPACE_VER:-dspace-9.0}"
     build:
       context: ./dspace/src/main/docker/dspace-solr/
       additional_contexts:
